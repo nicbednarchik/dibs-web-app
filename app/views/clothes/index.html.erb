@@ -1,0 +1,14 @@
+<div class="max-w-screen-xl mx-auto px-4 py-6">
+  <div class="mb-6 text-center">
+    <h1 class="text-3xl font-bold text-[#A85B5A]">From your friends’ closets to yours</h1>
+    <p class="mt-1 text-sm text-zinc-600">The perks of calling Dibs</p>
+  </div>
+
+  <% if @clothes.any? %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <%= render partial: "clothes/clothe_card", collection: @clothes, as: :clothe %>
+    </div>
+  <% else %>
+    <p class="text-zinc-600 text-center">No items yet.</p>
+  <% end %>
+</div>

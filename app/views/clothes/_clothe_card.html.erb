@@ -1,0 +1,97 @@
+<style>
+@keyframes dibsFade {
+  from { opacity: 0; transform: rotate(-12deg) scale(0.96); }
+  to   { opacity: 1; transform: rotate(-12deg) scale(1); }
+}
+.dibs-ribbon-anim { animation: dibsFade 300ms ease-out both; }
+</style>
+
+<article class="relative isolate h-full flex flex-col rounded-2xl bg-white shadow-md overflow-hidden">
+  <!-- header -->
+  <div class="flex items-center gap-3 px-4 pt-4">
+    <div class="h-8 w-8 rounded-full bg-[#A85B5A]/20"></div>
+    <div class="leading-tight">
+      <p class="font-medium"><%= "@#{clothe.user&.username || 'unknown'}" %></p>
+      <% if clothe.user&.first_name.present? %>
+        <p class="text-xs text-zinc-500"><%= clothe.user.first_name %></p>
+      <% end %>
+      <p class="text-xs text-zinc-500">Size: <%= clothe.size %></p>
+    </div>
+  </div>
+
+  <!-- image -->
+  <div class="relative">
+    <% if clothe.photos.attached? %>
+      <%= image_tag clothe.photos.first, class: "w-full object-cover aspect-[4/3] #{'grayscale' if clothe.dibbed?}" %>
+    <% else %>
+      <div class="w-full aspect-[4/3] bg-zinc-100"></div>
+    <% end %>
+
+    <% if clothe.dibbed? %>
+      <!-- gray tint -->
+      <div class="absolute inset-0 bg-zinc-200/50"></div>
+      <!-- CALLED DIBS banner -->
+      <div class="absolute inset-0 flex items-center justify-center">
+        <span class="dibs-ribbon-anim uppercase tracking-widest font-extrabold text-[#A85B5A] text-2xl sm:text-3xl bg-white/70 px-3 py-1 rounded-lg -rotate-12 shadow">
+            CALLED DIBS
+        </span>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- body -->
+  <div class="px-4 pb-4">
+    <h2 class="mt-3 text-lg font-semibold"><%= clothe.title %></h2>
+        <!-- DEBUG BADGE — remove after testing -->
+        <%# Shows current state so you know if the record is actually dibbed %>
+        <% if clothe.dibbed? %>
+        <span class="mt-2 inline-flex rounded-md bg-zinc-200 text-zinc-700 px-2 py-0.5 text-xs">
+            dibbed_by_id=<%= clothe.dibbed_by_id %>
+        </span>
+        <% end %>
+
+    <p class="mt-1 text-sm text-zinc-600"><%= clothe.description %></p>
+
+    <div class="mt-3 flex items-center justify-between">
+      <span class="inline-flex items-center rounded-full bg-[#A85B5A]/10 text-[#A85B5A] px-2.5 py-1 text-xs">
+        <%= clothe.item_type %> • <%= clothe.condition %>
+      </span>
+
+      <!-- ACTIONS (raised above everything, no bubbling) -->
+      <div class="relative z-50 pointer-events-auto flex items-center gap-2"
+           onclick="event.stopPropagation(); event.stopImmediatePropagation();">
+
+        <% if user_signed_in? %>
+          <% if clothe.dibbed? %>
+            <% if clothe.dibbed_by == current_user || clothe.user == current_user %>
+              <!-- RELEASE DIBS: plain HTML form -->
+              <form action="<%= undibs_clothe_path(clothe) %>" method="post" class="inline"
+                    data-turbo="false"
+                    onsubmit="event.stopPropagation(); event.stopImmediatePropagation();">
+                <input type="hidden" name="_method" value="delete">
+                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                <button type="submit"
+                        class="inline-flex items-center rounded-full bg-[#F4CDCD] px-3 py-1.5 text-[#A85B5A] text-sm shadow hover:bg-[#A85B5A] hover:text-white transition">
+                  Release Dibs
+                </button>
+              </form>
+            <% end %>
+          <% else %>
+            <% unless clothe.user == current_user %>
+              <!-- CALL DIBS: plain HTML form -->
+              <form action="<%= dibs_clothe_path(clothe) %>" method="post" class="inline"
+                    data-turbo="false"
+                    onsubmit="event.stopPropagation(); event.stopImmediatePropagation();">
+                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                <button type="submit"
+                        class="inline-flex items-center rounded-full bg-[#F4CDCD] px-3 py-1.5 text-[#A85B5A] text-sm shadow hover:bg-[#A85B5A] hover:text-white transition">
+                  Call Dibs
+                </button>
+              </form>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</article>

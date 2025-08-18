@@ -1,0 +1,54 @@
+<div class="min-h-[70vh] flex items-center justify-center px-4">
+  <div class="w-full max-w-md">
+    <!-- card -->
+    <div class="rounded-2xl bg-white shadow px-6 py-7">
+      <h1 class="text-2xl font-semibold text-[#A85B5A] text-center">Log in</h1>
+
+      <!-- errors -->
+      <% if resource.errors.any? %>
+        <div class="mt-4 mb-2 rounded-lg bg-red-50 text-red-700 px-4 py-3 text-sm">
+          <%= resource.errors.full_messages.to_sentence %>
+        </div>
+      <% end %>
+
+      <%= form_with(model: resource, url: session_path(resource_name), local: true) do |f| %>
+        <div class="mt-5">
+          <%= f.label :email, class: "block text-sm font-medium text-zinc-700" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <div class="mt-4">
+          <%= f.label :password, class: "block text-sm font-medium text-zinc-700" %>
+          <%= f.password_field :password, autocomplete: "current-password",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="mt-4 flex items-center gap-2">
+            <%= f.check_box :remember_me, class: "rounded border-zinc-300" %>
+            <%= f.label :remember_me, class: "text-sm text-zinc-700" %>
+          </div>
+        <% end %>
+
+        <div class="mt-6">
+          <%= f.submit "Log in",
+                class: "w-full inline-flex justify-center rounded-full bg-[#A85B5A] px-4 py-2.5 text-white shadow hover:opacity-95" %>
+        </div>
+      <% end %>
+
+      <div class="mt-4 flex items-center justify-between text-sm">
+        <% if devise_mapping.recoverable? %>
+          <%= link_to "Forgot your password?", new_password_path(resource_name), class: "text-[#A85B5A] hover:underline" %>
+        <% else %>
+          <span></span>
+        <% end %>
+
+        <% if devise_mapping.registerable? %>
+          <%= link_to "Sign up", new_registration_path(resource_name), class: "text-[#A85B5A] hover:underline" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+

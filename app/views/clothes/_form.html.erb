@@ -1,0 +1,89 @@
+<%= form_with model: clothe, local: true do |form| %>
+  <!-- error banner -->
+  <% if clothe.errors.any? %>
+    <div class="mb-4 rounded-lg bg-red-50 text-red-700 px-4 py-3">
+      <strong class="font-semibold"><%= pluralize(clothe.errors.count, "error") %></strong>
+      <span class="ml-1">prevented this item from saving:</span>
+      <ul class="list-disc ml-6 mt-1 text-sm">
+        <% clothe.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="max-w-screen-md mx-auto">
+    <div class="rounded-2xl bg-white shadow px-5 py-6">
+      <h1 class="text-xl font-semibold text-[#A85B5A] mb-4 text-center">Post new item</h1>
+
+      <!-- grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <%= form.label :title, class: "block text-sm font-medium text-zinc-700" %>
+          <%= form.text_field :title, required: true,
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <div>
+          <%= form.label :item_type, "Item type", class: "block text-sm font-medium text-zinc-700" %>
+          <%= form.text_field :item_type, required: true, placeholder: "Top, Dress, Pants, etc.",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <div class="md:col-span-2">
+          <%= form.label :description, class: "block text-sm font-medium text-zinc-700" %>
+          <%= form.text_area :description, rows: 4, required: true,
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <div>
+          <%= form.label :size, class: "block text-sm font-medium text-zinc-700" %>
+          <%= form.text_field :size, required: true, placeholder: "S / 4 / 28, etc.",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <div>
+          <%= form.label :condition, class: "block text-sm font-medium text-zinc-700" %>
+          <%= form.select :condition,
+                ["New", "Used – Excellent Condition", "Used – Good Condition", "Used – Bad Condition"],
+                { prompt: "Choose condition" },
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <div>
+          <%= form.label :brand, class: "block text-sm font-medium text-zinc-700" %>
+          <%= form.text_field :brand, required: true,
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+      <!-- photo upload -->
+      <div class="md:col-span-2">
+        <%= form.label :photos, "Photos", class: "block text-sm font-medium text-zinc-700" %>
+        <p class="text-xs text-zinc-600 mt-1">Select up to 5 pictures.</p>
+  
+        <div class="mt-2 flex items-center gap-4">
+          <% if clothe.persisted? && clothe.photos.attached? %>
+            <%= image_tag clothe.photos.first, class: "h-24 w-24 object-cover rounded-lg border border-zinc-200" %>
+          <% else %>
+            <div class="h-24 w-24 rounded-lg border border-dashed border-zinc-300 bg-zinc-50"></div>
+          <% end %>
+
+          <%= form.file_field :photos,
+                multiple: true,
+                accept: "image/*",
+                data: { max: 5 },
+                class: "block text-sm text-zinc-700" %>
+          </div>
+      </div>
+
+
+      <!-- actions -->
+      <div class="mt-6 flex items-center gap-3">
+        <%= form.submit "Save",
+              class: "inline-flex items-center rounded-full bg-[#A85B5A] px-4 py-2 text-white shadow hover:opacity-95" %>
+        <%= link_to "Cancel", clothes_path,
+              class: "text-sm text-zinc-600 hover:underline" %>
+      </div>
+    </div>
+  </div>
+<% end %>

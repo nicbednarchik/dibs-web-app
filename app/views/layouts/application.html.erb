@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Favicons -->
+    <link rel="icon" href="<%= asset_path 'hanger-icon.png' %>" type="image/png">
+    <link rel="apple-touch-icon" href="<%= asset_path 'hanger-icon.png' %>">
+
+    <title><%= content_for(:title) || "Dibs" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Tailwind (CDN) + Inter -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+
+    <%= yield :head %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-[#F7E6E6] text-zinc-800 antialiased">
+    <!-- Header -->
+    <header id="site-header" class="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-white/40">
+      <div class="max-w-screen-xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+        <!-- Left: logo (fixed size; won’t shrink on scroll) -->
+        <%= link_to root_path, class: "flex items-center gap-2" do %>
+          <%= image_tag "dibs-logo-no-background.png",
+                alt: "Dibs Logo",
+                class: "h-10 w-auto flex-none select-none pointer-events-none" %>
+          <span class="sr-only">Dibs</span>
+        <% end %>
+
+        <!-- Middle: nav + compact search -->
+        <nav class="flex items-center gap-2 sm:gap-3 text-sm flex-nowrap">
+          <% if user_signed_in? %>
+            <!-- compact single-pill search (cream) -->
+            <%= form_with url: users_path, method: :get, local: true, class: "hidden sm:flex w-full max-w-xs" do %>
+              <div class="flex w-full rounded-full border border-zinc-300 overflow-hidden shadow-sm bg-[#FFFCF9]">
+                <input type="text" name="q" value="<%= h(@q) %>" placeholder="Find @username"
+                       class="flex-1 px-4 py-2 text-sm bg-[#FFFCF9] focus:outline-none" />
+                <button type="submit"
+                        class="px-4 py-2 text-sm bg-[#A85B5A] text-white hover:opacity-90 transition whitespace-nowrap">
+                  Search
+                </button>
+              </div>
+            <% end %>
+
+            <!-- Action pills: light blush -> accent rose -->
+            <%= link_to "My Listings", my_listings_path,
+                class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#EEC2C2] active:bg-[#9A5150] whitespace-nowrap leading-none bg-[#F4CDCD] text-[#A85B5A] hover:bg-[#A85B5A] hover:text-white" %>
+
+            <%= link_to "Post New Item", new_clothe_path,
+                class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#EEC2C2] active:bg-[#9A5150] whitespace-nowrap leading-none bg-[#F4CDCD] text-[#A85B5A] hover:bg-[#A85B5A] hover:text-white" %>
+          <% else %>
+            <%= link_to "Login", new_user_session_path, class: "hover:underline whitespace-nowrap" %>
+            <%= link_to "Sign Up", new_user_registration_path,
+                class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#EEC2C2] active:bg-[#9A5150] whitespace-nowrap leading-none bg-[#F4CDCD] text-[#A85B5A] hover:bg-[#A85B5A] hover:text-white" %>
+          <% end %>
+        </nav>
+
+        <!-- Right: logout -->
+        <div class="flex-shrink-0">
+          <% if user_signed_in? %>
+            <%= button_to "Log out", destroy_user_session_path, method: :delete,
+                class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#EEC2C2] active:bg-[#9A5150] whitespace-nowrap leading-none bg-[#F4CDCD] text-[#A85B5A] hover:bg-[#A85B5A] hover:text-white" %>
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <!-- Flash messages -->
+    <% if notice.present? %>
+      <div class="mx-auto max-w-screen-md px-4 pt-3">
+        <p class="rounded-lg bg-green-50 text-green-700 px-4 py-2 text-sm"><%= notice %></p>
+      </div>
+    <% end %>
+    <% if alert.present? %>
+      <div class="mx-auto max-w-screen-md px-4 pt-3">
+        <p class="rounded-lg bg-red-50 text-red-700 px-4 py-2 text-sm"><%= alert %></p>
+      </div>
+    <% end %>
+
+    <!-- Page content -->
+    <%= yield %>
+  </body>
+</html>

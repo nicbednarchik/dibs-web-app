@@ -1,0 +1,69 @@
+<div class="min-h-[70vh] flex items-center justify-center px-4">
+  <div class="w-full max-w-md">
+    <!-- card -->
+    <div class="rounded-2xl bg-white shadow px-6 py-7">
+      <h1 class="text-2xl font-semibold text-[#A85B5A] text-center">Create your account</h1>
+
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <!-- username -->
+        <div class="mt-5">
+          <%= f.label :username, class: "block text-sm font-medium text-zinc-700" %>
+          <%= f.text_field :username, autofocus: true, placeholder: "e.g. nicole_b",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <!-- names -->
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= f.label :first_name, class: "block text-sm font-medium text-zinc-700" %>
+            <%= f.text_field :first_name, placeholder: "First name",
+                  class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+          </div>
+          <div>
+            <%= f.label :last_name, class: "block text-sm font-medium text-zinc-700" %>
+            <%= f.text_field :last_name, placeholder: "Last name",
+                  class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+          </div>
+        </div>
+
+        <!-- email -->
+        <div class="mt-4">
+          <%= f.label :email, class: "block text-sm font-medium text-zinc-700" %>
+          <%= f.email_field :email, autocomplete: "email", placeholder: "you@example.com",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <!-- password -->
+        <div class="mt-4">
+          <div class="flex items-center justify-between">
+            <%= f.label :password, class: "block text-sm font-medium text-zinc-700" %>
+            <% if @minimum_password_length %>
+              <span class="text-xs text-zinc-500">(<%= @minimum_password_length %> characters min)</span>
+            <% end %>
+          </div>
+          <%= f.password_field :password, autocomplete: "new-password",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <!-- confirm -->
+        <div class="mt-4">
+          <%= f.label :password_confirmation, class: "block text-sm font-medium text-zinc-700" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+
+        <!-- submit -->
+        <div class="mt-6">
+          <%= f.submit "Sign up",
+                class: "w-full inline-flex justify-center rounded-full bg-[#A85B5A] px-4 py-2.5 text-white shadow hover:opacity-95" %>
+        </div>
+      <% end %>
+
+      <div class="mt-4 text-center text-sm">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>
