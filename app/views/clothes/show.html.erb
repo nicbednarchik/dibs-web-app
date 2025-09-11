@@ -1,31 +1,46 @@
 <div class="max-w-screen-lg mx-auto px-4 py-6">
-  <!-- top bar: single back link + edit only for owner -->
-    <div class="mb-4 flex items-center justify-between">
-        <%= link_to "← Back", (request.referer || clothes_path), class: "text-[#A85B5A] hover:underline" %>
+  <style>
+  @keyframes dibsFade {
+    from { opacity:0; transform: rotate(-12deg) scale(0.96); }
+    to   { opacity:1; transform: rotate(-12deg) scale(1); }
+  }
+  .dibs-ribbon-anim { animation: dibsFade 300ms ease-out both; }
+  </style>
 
-        <% if user_signed_in? && current_user.id == @item.user_id %>
-            <%= link_to "Edit", edit_clothe_path(@item), class: "text-sm text-zinc-600 hover:underline" %>
+  <!-- top bar -->
+  <div class="mb-4 flex items-center justify-between">
+    <%= link_to "← Back", (request.referer || clothes_path), class: "text-[#A85B5A] hover:underline" %>
+    <% if user_signed_in? && current_user.id == @item.user_id %>
+      <%= link_to "Edit", edit_clothe_path(@item), class: "text-sm text-zinc-600 hover:underline" %>
     <% end %>
-</div>
-
+  </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- LEFT: image gallery -->
+    <!-- LEFT: image with overlay -->
     <div>
-      <div class="w-full bg-white rounded-2xl shadow flex items-center justify-center aspect-[4/3] overflow-hidden">
+      <div class="relative w-full bg-white rounded-2xl shadow flex items-center justify-center aspect-[4/3] overflow-hidden">
         <% if @item.photos.attached? %>
-          <%= image_tag @item.photos.first, id: "main-photo", class: "max-h-full max-w-full object-contain" %>
+          <%= image_tag @item.photos.first, id: "main-photo",
+                class: "max-h-full max-w-full object-contain #{'grayscale' if @item.dibbed?}" %>
         <% else %>
           <div class="text-zinc-400">No photos</div>
+        <% end %>
+
+        <% if @item.dibbed? %>
+          <div class="absolute inset-0 bg-zinc-200/50"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="dibs-ribbon-anim uppercase tracking-widest font-extrabold text-[#A85B5A] text-2xl sm:text-3xl bg-white/70 px-3 py-1 rounded-lg -rotate-12 shadow">
+              CALLED DIBS
+            </span>
+          </div>
         <% end %>
       </div>
 
       <% if @item.photos.attached? && @item.photos.count > 1 %>
         <div class="mt-3 grid grid-cols-5 gap-2">
           <% @item.photos.each_with_index do |photo, idx| %>
-            <button
-              class="aspect-square rounded-xl overflow-hidden bg-white border <%= idx.zero? ? 'ring-2 ring-[#A85B5A]' : 'border-zinc-200' %>"
-              data-thumb="<%= url_for(photo) %>">
+            <button class="aspect-square rounded-xl overflow-hidden bg-white border <%= idx.zero? ? 'ring-2 ring-[#A85B5A]' : 'border-zinc-200' %>"
+                    data-thumb="<%= url_for(photo) %>">
               <%= image_tag photo, class: "w-full h-full object-cover" %>
             </button>
           <% end %>
@@ -33,10 +48,16 @@
       <% end %>
     </div>
 
-    <!-- RIGHT: details -->
+    <!-- RIGHT: details + dibs actions -->
     <div class="rounded-2xl bg-white shadow px-6 py-6">
       <div class="flex items-center gap-3">
+        <% if @item.user&.avatar&.attached? %>
+            <%= image_tag @item.user.avatar.variant(resize_to_fill: [32,32]),
+                    class: "h-8 w-8 rounded-full object-cover" %>
+        <% else %>
         <div class="h-8 w-8 rounded-full bg-[#A85B5A]/20"></div>
+        <% end %>
+
         <div class="leading-tight">
           <p class="font-medium"><%= "@#{@item.user&.username || 'unknown'}" %></p>
         </div>
@@ -54,53 +75,47 @@
       </div>
 
       <div class="mt-6 flex items-center gap-3">
-        <%= link_to "Call dibs", "#",
-            class: "inline-flex items-center rounded-full bg-[#A85B5A] px-4 py-2 text-white shadow hover:opacity-95" %>
-        <%= link_to "Message", "#",
-            class: "text-sm text-zinc-600 hover:underline" %>
+        <% if user_signed_in? %>
+          <% if @item.dibbed? %>
+            <% if @item.dibbed_by == current_user || @item.user == current_user %>
+              <!-- REMOVE DIBS CALL (owner OR caller) -->
+              <form action="<%= undibs_clothe_path(@item) %>" method="post" class="inline" data-turbo="false">
+                <input type="hidden" name="_method" value="delete">
+                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                <button type="submit"
+                        class="inline-flex items-center rounded-full bg-[#F4CDCD] px-4 py-2 text-[#A85B5A] text-sm shadow hover:bg-[#A85B5A] hover:text-white transition">
+                  Remove Dibs
+                </button>
+              </form>
+            <% else %>
+              <span class="text-sm text-zinc-500">Someone else has dibs.</span>
+            <% end %>
+          <% else %>
+            <% unless @item.user == current_user %>
+              <!-- CALL DIBS (non-owner only) -->
+              <form action="<%= dibs_clothe_path(@item) %>" method="post" class="inline" data-turbo="false">
+                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                <button type="submit"
+                        class="inline-flex items-center rounded-full bg-[#F4CDCD] px-4 py-2 text-[#A85B5A] text-sm shadow hover:bg-[#A85B5A] hover:text-white transition">
+                  Call Dibs
+                </button>
+              </form>
+            <% else %>
+              <span class="text-sm text-zinc-500">You own this item.</span>
+            <% end %>
+          <% end %>
+        <% else %>
+          <%= link_to "Log in to call dibs", new_user_session_path, class: "text-[#A85B5A] hover:underline" %>
+        <% end %>
       </div>
     </div>
   </div>
-
-  <div class="mt-4 flex items-center gap-2">
-  <% if user_signed_in? %>
-    <% if @item.dibbed? %>
-      <% if @item.dibbed_by == current_user || @item.user == current_user %>
-        <!-- Release Dibs -->
-        <form action="<%= undibs_clothe_path(@item) %>" method="post" class="inline" data-turbo="false">
-          <input type="hidden" name="_method" value="delete">
-          <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-          <button type="submit"
-                  class="inline-flex items-center rounded-full bg-[#F4CDCD] px-4 py-2 text-[#A85B5A] text-sm shadow hover:bg-[#A85B5A] hover:text-white transition">
-            Release Dibs
-          </button>
-        </form>
-      <% end %>
-    <% else %>
-      <% unless @item.user == current_user %>
-        <!-- Call Dibs -->
-        <form action="<%= dibs_clothe_path(@item) %>" method="post" class="inline" data-turbo="false">
-          <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-          <button type="submit"
-                  class="inline-flex items-center rounded-full bg-[#F4CDCD] px-4 py-2 text-[#A85B5A] text-sm shadow hover:bg-[#A85B5A] hover:text-white transition">
-            Call Dibs
-          </button>
-        </form>
-      <% end %>
-    <% end %>
-  <% else %>
-    <%= link_to "Log in to call dibs", new_user_session_path, class: "text-[#A85B5A] hover:underline" %>
-  <% end %>
-</div>
-
 
   <% if @more_from_user.present? %>
     <div class="mt-10">
       <h2 class="text-lg font-medium mb-3">More from <span class="text-[#A85B5A]">@<%= @item.user.username %></span></h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <% @more_from_user.each do |clothe| %>
-          <%= render partial: "clothes/clothe_card", locals: { clothe: clothe } %>
-        <% end %>
+        <%= render partial: "clothes/clothe_card", collection: @more_from_user, as: :clothe %>
       </div>
     </div>
   <% end %>

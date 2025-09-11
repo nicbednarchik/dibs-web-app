@@ -37,6 +37,14 @@ class ClothesController < ApplicationController
       .order(created_at: :desc)
   end
 
+  # My Dibs: items I called dibs on
+  def my_dibs
+    @clothes = Clothe
+      .where(dibbed_by_id: current_user.id)
+      .includes(:user, :dibbed_by, photos_attachments: :blob)
+      .order(dibbed_at: :desc)
+  end
+
   def edit
     # @clothe set by set_clothe
   end
@@ -59,9 +67,9 @@ class ClothesController < ApplicationController
   def undibs
     if @clothe.dibbed_by_id == current_user.id || @clothe.user_id == current_user.id
       @clothe.update!(dibbed_by_id: nil, dibbed_at: nil)
-      redirect_back fallback_location: clothe_path(@clothe), notice: "Dibs released."
+      redirect_back fallback_location: clothe_path(@clothe), notice: "Item has been undibed"
     else
-      redirect_back fallback_location: clothe_path(@clothe), alert: "Not authorized to release dibs."
+      redirect_back fallback_location: clothe_path(@clothe), alert: "Not authorized to release dibs"
     end
   end
 

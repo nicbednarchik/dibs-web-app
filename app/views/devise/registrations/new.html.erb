@@ -54,6 +54,12 @@
                 class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
         </div>
 
+        <div class="mt-4">
+          <%= f.label :avatar, "Profile photo", class: "block text-sm font-medium text-zinc-700" %>
+          <%= f.file_field :avatar, accept: "image/*",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2" %>
+      </div>
+
         <!-- submit -->
         <div class="mt-6">
           <%= f.submit "Sign up",

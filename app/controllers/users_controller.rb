@@ -26,4 +26,8 @@ class UsersController < ApplicationController
                     .includes(:dibbed_by, photos_attachments: :blob)
                     .order(created_at: :desc)
   end
+
+  def edit
+    @user = User.find(params[:id])
+  end
 end

@@ -1,6 +1,13 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :lockable, :timeoutable, :trackable and :omniauthable, :confirmable
+  has_one_attached :avatar
+  attr_accessor :remove_avatar
+  before_save :purge_avatar_if_requested
+
+  private
+  def purge_avatar_if_requested
+    avatar.purge if ActiveModel::Type::Boolean.new.cast(remove_avatar)
+  end
+
   has_many :clothes, dependent: :destroy
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable

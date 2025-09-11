@@ -51,12 +51,17 @@
               </div>
             <% end %>
 
+
             <!-- Action pills: light blush -> accent rose -->
             <%= link_to "My Listings", my_listings_path,
                 class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#EEC2C2] active:bg-[#9A5150] whitespace-nowrap leading-none bg-[#F4CDCD] text-[#A85B5A] hover:bg-[#A85B5A] hover:text-white" %>
 
+            <%= link_to "My Dibs", my_dibs_clothes_path,
+                class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#EEC2C2] active:bg-[#9A5150] whitespace-nowrap leading-none bg-[#F4CDCD] text-[#A85B5A] hover:bg-[#A85B5A] hover:text-white" %>
+
             <%= link_to "Post New Item", new_clothe_path,
                 class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#EEC2C2] active:bg-[#9A5150] whitespace-nowrap leading-none bg-[#F4CDCD] text-[#A85B5A] hover:bg-[#A85B5A] hover:text-white" %>
+                      
           <% else %>
             <%= link_to "Login", new_user_session_path, class: "hover:underline whitespace-nowrap" %>
             <%= link_to "Sign Up", new_user_registration_path,
@@ -67,9 +72,18 @@
         <!-- Right: logout -->
         <div class="flex-shrink-0">
           <% if user_signed_in? %>
-            <%= button_to "Log out", destroy_user_session_path, method: :delete,
-                class: "inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#EEC2C2] active:bg-[#9A5150] whitespace-nowrap leading-none bg-[#F4CDCD] text-[#A85B5A] hover:bg-[#A85B5A] hover:text-white" %>
+            <%# Replace the text link with this block %>
+            <%= link_to edit_user_registration_path, class: "inline-flex items-center gap-2" do %>
+              <% if current_user.avatar&.attached? %>
+                <%= image_tag current_user.avatar.variant(resize_to_fill: [28,28]),
+                      class: "h-7 w-7 rounded-full object-cover ring-2 ring-white shadow" %>
+              <% else %>
+                <div class="h-7 w-7 rounded-full bg-[#A85B5A]/20 ring-2 ring-white"></div>
+              <% end %>
+              <span class="sr-only">Edit Profile</span>
+            <% end %>
           <% end %>
+
         </div>
       </div>
     </header>
