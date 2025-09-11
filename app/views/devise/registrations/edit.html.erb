@@ -1,6 +1,6 @@
 <h2>Edit <%= resource_name.to_s.humanize %></h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
 
   <div class="field">
@@ -40,13 +40,17 @@
   <div class="mt-4">
     <%= f.label :avatar, "Profile photo", class: "block text-sm font-medium text-zinc-700" %>
 
-    <% if resource.persisted? && resource.avatar.attached? %>
-      <div class="mt-2 flex items-center gap-3">
-        <%= image_tag resource.avatar.variant(resize_to_fill: [64,64]),
-              class: "h-16 w-16 rounded-full object-cover" %>
-        <span class="text-sm text-zinc-500">Current</span>
-      </div>
-    <% end %>
+    <% if resource.avatar.attached? && resource.avatar.blob&.persisted? %>
+    <div class="mt-2 flex items-center gap-3">
+      <%= image_tag resource.avatar.variant(resize_to_fill: [64,64]),
+            class: "h-16 w-16 rounded-full object-cover" %>
+      <span class="text-sm text-zinc-500">Current</span>
+    </div>
+  <% elsif resource.avatar.attached? && !resource.avatar.blob&.persisted? %>
+    <p class="mt-2 text-xs text-zinc-500">
+      Photo selected — it will appear here after you save.
+    </p>
+  <% end %>
 
     <%= f.file_field :avatar, accept: "image/*",
           class: "mt-2 w-full rounded-lg border border-zinc-300 px-3 py-2" %>

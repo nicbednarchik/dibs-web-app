@@ -2,7 +2,7 @@
 Rails.application.routes.draw do
   # ========== Devise (auth) ==========
   # Exposes sign up, log in, log out, edit profile, etc.
-  devise_for :users
+  devise_for :users, controllers: { registrations: "registrations" }
 
   # ========== Homepage ==========
   root "clothes#index"
