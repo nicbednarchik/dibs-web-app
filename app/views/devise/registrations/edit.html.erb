@@ -1,68 +1,100 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="max-w-screen-sm mx-auto px-4 py-10">
+  <!-- Card -->
+  <div class="rounded-2xl bg-white shadow px-6 py-7">
+    <h2 class="text-2xl font-semibold text-[#A85B5A] text-center">Edit Profile</h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+    <%= form_for(resource,
+                 as: resource_name,
+                 url: registration_path(resource_name),
+                 html: { method: :put, multipart: true, class: "mt-6 space-y-5" }) do |f| %>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+      <%= render "devise/shared/error_messages", resource: resource %>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+      <!-- Email -->
+      <div>
+        <%= f.label :email, class: "block text-sm font-medium text-zinc-700" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+              class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+      </div>
 
-  <div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
+      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+        <div class="rounded-lg bg-yellow-50 text-yellow-800 px-4 py-2 text-sm">
+          Currently waiting confirmation for: <%= resource.unconfirmed_email %>
+        </div>
+      <% end %>
+
+      <!-- Username -->
+      <div>
+        <%= f.label :username, class: "block text-sm font-medium text-zinc-700" %>
+        <%= f.text_field :username,
+              class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+      </div>
+
+      <!-- Avatar -->
+      <div>
+        <%= f.label :avatar, "Profile photo", class: "block text-sm font-medium text-zinc-700" %>
+
+        <% if resource.avatar.attached? %>
+          <div class="mt-2 flex items-center gap-3">
+            <%# Force the variant to generate so the img isn't broken %>
+            <%= image_tag(
+                  url_for(resource.avatar.variant(resize_to_fill: [64,64]).processed),
+                  class: "h-16 w-16 rounded-full object-cover ring-2 ring-white shadow"
+                ) %>
+            <span class="text-sm text-zinc-500">Current</span>
+          </div>
+        <% end %>
+
+        <%= f.file_field :avatar, accept: "image/*",
+              class: "mt-2 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+      </div>
+
+      <!-- Passwords -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <%= f.label :password, class: "block text-sm font-medium text-zinc-700" %>
+          <%= f.password_field :password, autocomplete: "new-password",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+          <p class="mt-1 text-xs text-zinc-500">(leave blank if you don't want to change it)
+            <% if @minimum_password_length %>
+              — <%= @minimum_password_length %> characters minimum
+            <% end %>
+          </p>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, class: "block text-sm font-medium text-zinc-700" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :current_password, class: "block text-sm font-medium text-zinc-700" %>
+        <%= f.password_field :current_password, autocomplete: "current-password",
+              class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#A85B5A]/40" %>
+        <p class="mt-1 text-xs text-zinc-500">(we need your current password to confirm your changes)</p>
+      </div>
+
+      <!-- Actions -->
+      <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <%= f.submit "Update",
+              class: "w-full sm:w-auto inline-flex justify-center rounded-full bg-[#F4CDCD] px-5 py-2 text-[#A85B5A] text-sm font-medium shadow-md hover:bg-[#A85B5A] hover:text-white hover:shadow-lg transition" %>
+
+        <%= link_to "Back", (request.referer || root_path),
+              class: "w-full sm:w-auto inline-flex justify-center rounded-full px-5 py-2 text-sm font-medium text-zinc-700 hover:text-[#A85B5A] transition" %>
+      </div>
     <% end %>
-  </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
-
-  <div class="mt-4">
-    <%= f.label :username, class: "block text-sm font-medium text-zinc-700" %>
-    <%= f.text_field :username,
-          class: "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2" %>
-  </div>
-
-  <div class="mt-4">
-    <%= f.label :avatar, "Profile photo", class: "block text-sm font-medium text-zinc-700" %>
-
-    <% if resource.avatar.attached? && resource.avatar.blob&.persisted? %>
-    <div class="mt-2 flex items-center gap-3">
-      <%= image_tag resource.avatar.variant(resize_to_fill: [64,64]),
-            class: "h-16 w-16 rounded-full object-cover" %>
-      <span class="text-sm text-zinc-500">Current</span>
+    <!-- Danger zone -->
+    <div class="mt-8 border-t border-zinc-200 pt-6">
+      <div class="mt-3">
+        <%= button_to "Delete my account",
+              registration_path(resource_name),
+              method: :delete,
+              data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" },
+              class: "inline-flex items-center rounded-full px-5 py-2 text-sm font-medium border border-red-300 text-red-600 hover:bg-red-50 transition" %>
+      </div>
     </div>
-  <% elsif resource.avatar.attached? && !resource.avatar.blob&.persisted? %>
-    <p class="mt-2 text-xs text-zinc-500">
-      Photo selected — it will appear here after you save.
-    </p>
-  <% end %>
-
-    <%= f.file_field :avatar, accept: "image/*",
-          class: "mt-2 w-full rounded-lg border border-zinc-300 px-3 py-2" %>
   </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>
