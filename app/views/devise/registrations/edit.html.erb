@@ -81,8 +81,10 @@
         <%= f.submit "Update",
               class: "w-full sm:w-auto inline-flex justify-center rounded-full bg-[#F4CDCD] px-5 py-2 text-[#A85B5A] text-sm font-medium shadow-md hover:bg-[#A85B5A] hover:text-white hover:shadow-lg transition" %>
 
-        <%= link_to "Back", (request.referer || root_path),
-              class: "w-full sm:w-auto inline-flex justify-center rounded-full px-5 py-2 text-sm font-medium text-zinc-700 hover:text-[#A85B5A] transition" %>
+        <%= link_to "Back", "#",
+              data: { turbo: false },
+              onclick: "if (document.referrer) { history.back(); } else { window.location='#{root_path}'; } return false;",
+              class: "inline-flex justify-center rounded-full px-5 py-2 text-sm font-medium text-zinc-700 hover:text-[#A85B5A] transition" %>
 
       </div>
     <% end %>
