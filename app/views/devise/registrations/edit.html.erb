@@ -83,6 +83,12 @@
 
         <%= link_to "Back", (request.referer || root_path),
               class: "w-full sm:w-auto inline-flex justify-center rounded-full px-5 py-2 text-sm font-medium text-zinc-700 hover:text-[#A85B5A] transition" %>
+
+        <%= button_to "Log out",
+              destroy_user_session_path,
+              method: :delete,
+              class: "w-full sm:w-auto inline-flex justify-center rounded-full bg-white border border-zinc-300 px-5 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 hover:text-[#A85B5A] transition" %>
+
       </div>
     <% end %>
 

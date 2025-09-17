@@ -424,7 +424,7 @@ DEPENDENCIES
   solid_cable
   solid_cache
   solid_queue
-  sqlite3 (>= 2.1)
+  sqlite3 (~> 2.7)
   stimulus-rails
   tailwindcss-rails (~> 4.3)
   thruster
