@@ -90,4 +90,6 @@ Rails.application.configure do
 
 
   config.hosts << ENV.fetch("APP_HOST", nil)
+
+  config.assets.initialize_on_precompile = false
 end
