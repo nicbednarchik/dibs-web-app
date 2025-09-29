@@ -79,23 +79,6 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  url: <%= ENV["DATABASE_URL"] %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  url: <%= ENV.fetch("DATABASE_URL", "postgres://user:pass@localhost:5432/dummy") %>
   adapter: postgresql
-  primary: &primary_production
-    <<: *default
-    database: dibs_production
-    username: dibs
-    password: <%= ENV["DIBS_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: dibs_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: dibs_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: dibs_production_cable
-    migrations_paths: db/cable_migrate
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
