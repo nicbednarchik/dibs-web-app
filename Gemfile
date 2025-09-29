@@ -20,7 +20,7 @@ gem "devise", "~> 4.9"
 
 group :development, :test do
   # Use sqlite locally for easy setup
-  gem "sqlite3", "~> 2.7"
+  gem "pg"
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
@@ -37,5 +37,5 @@ end
 
 # Use Postgres only in production (Koyeb)
 group :production do
-  gem "pg", "~> 1.6"
+  gem "pg"
 end
