@@ -1,22 +1,30 @@
 # config/database.yml
-
 default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
   timeout: 5000
 
 development:
-  <<: *default
-  adapter: sqlite3
-  database: db/development.sqlite3
+  primary:
+    adapter: sqlite3
+    database: db/development.sqlite3
+  cable:
+    adapter: sqlite3
+    database: db/development.sqlite3
 
 test:
-  <<: *default
-  adapter: sqlite3
-  database: db/test.sqlite3
+  primary:
+    adapter: sqlite3
+    database: db/test.sqlite3
+  cable:
+    adapter: sqlite3
+    database: db/test.sqlite3
 
 production:
-  <<: *default
-  # Rails will read the full connection string from the env var on Render.
-  # The fallback keeps asset builds from crashing if DATABASE_URL isn't present locally.
-  url: <%= ENV.fetch("DATABASE_URL", "postgres://user:pass@localhost:5432/dummy") %>
-  adapter: postgresql
+  primary:
+    url: <%= ENV["DATABASE_URL"] %>
+    adapter: postgresql
+  cable:
+    # If you create a separate DB for Action Cable, set CABLE_DATABASE_URL.
+    # Otherwise it will reuse the main DATABASE_URL.
+    url: <%= ENV.fetch("CABLE_DATABASE_URL", ENV["DATABASE_URL"]) %>
+    adapter: postgresql
