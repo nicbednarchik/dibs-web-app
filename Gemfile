@@ -20,7 +20,7 @@ gem "devise", "~> 4.9"
 
 group :development, :test do
   # Use sqlite locally for easy setup
-  gem "pg"
+  gem "sqlite3", "~> 2.1"
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
