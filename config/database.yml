@@ -13,6 +13,9 @@ development:
   queue:
     adapter: sqlite3
     database: db/development.sqlite3
+  cache:
+    adapter: sqlite3
+    database: db/development.sqlite3
 
 test:
   primary:
@@ -22,6 +25,9 @@ test:
     adapter: sqlite3
     database: db/test.sqlite3
   queue:
+    adapter: sqlite3
+    database: db/test.sqlite3
+  cache:
     adapter: sqlite3
     database: db/test.sqlite3
 
@@ -34,4 +40,7 @@ production:
     adapter: postgresql
   queue:
     url: <%= ENV.fetch("QUEUE_DATABASE_URL", ENV["DATABASE_URL"]) %>
+    adapter: postgresql
+  cache:
+    url: <%= ENV.fetch("CACHE_DATABASE_URL", ENV["DATABASE_URL"]) %>
     adapter: postgresql
