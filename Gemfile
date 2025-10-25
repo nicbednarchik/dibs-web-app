@@ -3,7 +3,7 @@ source "https://rubygems.org"
 
 ruby File.read(".ruby-version").strip rescue nil
 
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.1.0"
 gem "propshaft"
 gem "puma", ">= 5.0"
 gem "importmap-rails"
