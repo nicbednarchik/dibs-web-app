@@ -10,6 +10,9 @@ development:
   cable:
     adapter: sqlite3
     database: db/development.sqlite3
+  queue:
+    adapter: sqlite3
+    database: db/development.sqlite3
 
 test:
   primary:
@@ -18,13 +21,17 @@ test:
   cable:
     adapter: sqlite3
     database: db/test.sqlite3
+  queue:
+    adapter: sqlite3
+    database: db/test.sqlite3
 
 production:
   primary:
     url: <%= ENV["DATABASE_URL"] %>
     adapter: postgresql
   cable:
-    # If you create a separate DB for Action Cable, set CABLE_DATABASE_URL.
-    # Otherwise it will reuse the main DATABASE_URL.
     url: <%= ENV.fetch("CABLE_DATABASE_URL", ENV["DATABASE_URL"]) %>
+    adapter: postgresql
+  queue:
+    url: <%= ENV.fetch("QUEUE_DATABASE_URL", ENV["DATABASE_URL"]) %>
     adapter: postgresql
