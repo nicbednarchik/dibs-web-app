@@ -1,3 +1,4 @@
+# config/environments/production.rb
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
@@ -16,6 +17,8 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
 
   # Cache assets for far-future expiry since they are all digest stamped.
+  # (Render: serve static files when env flag is present)
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
@@ -58,7 +61,10 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  config.action_mailer.default_url_options = {
+    host: ENV["APP_HOST"].presence || ENV["RENDER_EXTERNAL_HOSTNAME"],
+    protocol: "https"
+  }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {
@@ -88,8 +94,13 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-
-  config.hosts << ENV.fetch("APP_HOST", nil)
+  # Allow custom app host (if set) and Render-provided hostname safely
+  if (app_host = ENV["APP_HOST"]).present?
+    config.hosts << app_host
+  end
+  if (render_host = ENV["RENDER_EXTERNAL_HOSTNAME"]).present?
+    config.hosts << render_host
+  end
 
   config.assets.initialize_on_precompile = false
 end
