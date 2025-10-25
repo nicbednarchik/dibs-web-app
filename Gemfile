@@ -1,4 +1,7 @@
+# Gemfile
 source "https://rubygems.org"
+
+ruby File.read(".ruby-version").strip rescue nil
 
 gem "rails", "~> 8.0.2"
 gem "propshaft"
@@ -19,7 +22,7 @@ gem "tailwindcss-rails", "~> 4.3"
 gem "devise", "~> 4.9"
 
 group :development, :test do
-  # Use sqlite locally for easy setup
+  # SQLite locally for easy setup (Rails 8 needs sqlite3 >= 2.1)
   gem "sqlite3", "~> 2.1"
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
   gem "brakeman", require: false
@@ -35,7 +38,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
-# Use Postgres only in production (Koyeb)
+# Postgres only in production (Render)
 group :production do
   gem "pg"
 end
